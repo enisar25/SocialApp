@@ -1,0 +1,10 @@
+import mongoose from "mongoose";
+
+export const connectDB = async (mongoURI: string): Promise<void> => {
+    await mongoose.connect(mongoURI).then(() => {
+        console.log("MongoDB connected successfully");
+    }).catch((error) => {
+        console.error("MongoDB connection error:", error);
+        process.exit(1);
+    });
+};
