@@ -4,8 +4,11 @@ import router from "./modules/routes";
 import { connectDB } from "./DB/config/connectDB";
 import cors from "cors"
 import initGateway from "./gateway/gateway";
-import { GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
+import { createHandler } from 'graphql-http/lib/use/express'
+import { schema } from "./modules/graphql/main.graphql";
+import { authMiddleware, AuthRequest } from "./middleware/authorization";
 const app = express();
+
 
 const bootstrap = async () => {
     app.use(express.json());
@@ -13,20 +16,12 @@ const bootstrap = async () => {
     app.use("/api/v1", router);
     const port = process.env.PORT || 3000;
 
-    const dchema = new GraphQLSchema({
-      query: new GraphQLObjectType({
-        name:'mainQuery',
-        fields:{
-          hello:{
-            type:GraphQLString,
-            resolve: ()=>{
-              return 'hello'
-            }
-          }
-        }
-      }),
-    })
-
+    app.all('/graphql',createHandler({
+      schema: schema,
+      context: (req)=>({
+        authorization: req.raw.headers.authorization
+      })
+    }))
 
     //Connect to Database
     await connectDB(process.env.DB_HOST as string);

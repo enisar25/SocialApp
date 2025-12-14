@@ -1,3 +1,4 @@
+import { GraphQLID, GraphQLInt, GraphQLObjectType, GraphQLString } from "graphql";
 import { IOTP } from "../../DB/models/user.model";
 import { HydratedDocument } from "mongoose";
 
@@ -19,5 +20,15 @@ export interface IUser {
     resetPasswordOTP: IOTP;
     friends: string[];
 }
+
+export const GraphQlUserType = new GraphQLObjectType({
+    name:"usertype",
+    fields:{
+        _id:{type:GraphQLID},
+        username:{type:GraphQLString},
+        email:{type:GraphQLString},
+        age:{type:GraphQLInt}
+    }
+})
 
 export type HIuser = HydratedDocument<IUser>;
